@@ -1,13 +1,11 @@
+#include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include <list>
-#include <stdlib.h>
-#include <string.h>
-
-//#include "Generate_matrix.h"
-//#include "Version_naive.h"
+//#include <stdlib.h>
+//#include <string.h>
 
 using namespace std;
 
@@ -21,22 +19,21 @@ void TheF(char* dir) {
     list<int> ans_j;
 
 
-    FILE* ifile = NULL;
-    FILE* ofile = NULL;
+    ifstream ifile;
+    ofstream ofile;
 
-    char ifileDir[30] = {0};
-    char ofileDir[30] = {0};
-    strcpy(ifileDir, strcat(dir, "/matrix.data"));
-    strcat(ofileDir, strcat(dir, "/final.peak"));
+    string num = dir;
+    string ifileDir = "106062223/matrix.data";
+    string ofileDir = "106062223/final.peak";
 
-    if((ifile = fopen(ifileDir, "r") ) == NULL) {
-        exit(999);
-    }
-    ofile = fopen(ofileDir, "w");
+
+    ifile.open(ifileDir, ios::in);
+    ofile.open(ofileDir, ios::out);
 
 
 
-    fscanf(ifile, "%d %d\n", &height, &width);
+    //fscanf(ifile, "%d %d\n", &height, &width);
+    ifile >> height >> width;
     total = height * width;
     head = new int[height*width];
     matrix = new int*[height];
@@ -46,8 +43,9 @@ void TheF(char* dir) {
     }
 
     for(int i=0; i<total; i++) {
-        fscanf(ifile, "%d", head+i);
+        //fscanf(ifile, "%d", head+i);
         //getchar();
+        ifile >> head[i];
     }
 
 
@@ -62,6 +60,7 @@ void TheF(char* dir) {
             ans_i.push_back(1);
             ans_j.push_back(1);
         }
+
 
         int i=0;
         for(int j=1; j<width-1; j++) {
@@ -140,10 +139,12 @@ void TheF(char* dir) {
 
 
 
-    fprintf(ofile, "%d\n", ans_i.size());
+    //fprintf(ofile, "%lu\n", ans_i.size());
+    ofile << ans_i.size() << endl;
     for(std::list<int>::iterator iter_i = ans_i.begin(), iter_j = ans_j.begin();
         iter_i != ans_i.end(); iter_i++, iter_j++) {
-        fprintf(ofile, "%d %d\n", *iter_i, *iter_j);
+        //fprintf(ofile, "%d %d\n", *iter_i, *iter_j);
+        ofile << *iter_i << " " << *iter_j << endl;
     }
 
     /*
@@ -158,8 +159,8 @@ void TheF(char* dir) {
 
     delete[] head;
     delete[] matrix;
-    fclose(ifile);
-    fclose(ofile);
+    ifile.close();
+    ofile.close();
 }
 
 
@@ -169,9 +170,13 @@ int main(int argc, char** argv)
     //Generate_matrix();
     //Pattern_matrix();
 
+    TheF("NOPE");
+
+    /*
     if(argc >= 2)
         TheF(argv[1]);
     else return 0xAAAAA;
+    */
 
     //printf("> %ld\n", clock() - s);
 
