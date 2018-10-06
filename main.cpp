@@ -239,10 +239,11 @@ void BigRow(const char* dir) {
         int i=0;
 /// Flattens out into three parts to avoid using i%3
         while(true) {
+            //printf("%4d ", i);
             // Part 1 - "0,1,2".  1 being the middle row
             if(++i > height_1) break;
             for(int j=0; j<width; j++) {
-                cin >> head[1 + j*3];
+                ifile >> head[1 + j*3];
             }
                 // leftmost col
             if(head[1 + 0] > head[    0    ] &&
@@ -272,7 +273,7 @@ void BigRow(const char* dir) {
             /// Part 2 - "1,2,0"
             if(++i > height_1) break;
             for(int j=0; j<width; j++) {
-                cin >> head[2 + j*3];
+                ifile >> head[2 + j*3];
             }
                 // leftmost col
             if(head[2    ] > head[1    ] &&
@@ -302,7 +303,7 @@ void BigRow(const char* dir) {
             /// Part 3 - "2,0,1"
             if(++i > height_1) break;
             for(int j=0; j<width; j++) {
-                cin >> head[   j*3];
+                ifile >> head[   j*3];
             }
                 // leftmost col
             if(head[0    ] > head[2    ] &&
@@ -439,12 +440,14 @@ int main(int argc, char** argv)
 
     /// assuming width>=2 && height>=3
 
+    BigRow("106062223");
+    //Naive("106062223");
+    /*
     if(argc >= 2){
         BigRow(argv[1]);
-
     }
     else exit(0xAAAAAAAA);
-
+    */
 
     //printf("> %ld\n", clock() - s);
 
