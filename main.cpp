@@ -1147,6 +1147,773 @@ void BigRow_deltaI(const char* dir) {
 }
 
 
+inline void Check_J(unsigned short& j_idx, short** ans_j, unsigned char& j_curr) {
+    if(j_idx >= 15625) {
+        j_idx = 0;
+        j_curr++;
+        ans_j[j_curr] = new short[15625];
+    }
+}
+
+void BigRow_deltaI_SepArr(const char* dir) {
+    unsigned short height, width, height_1, width_1;
+    int* head;
+    //list<pair<int, int>> ans;
+    short ans_i[1000];
+    short* ans_j[32]; // maximum peak count = 1000*1000/2 = 500,000; divide into 32*15625;
+    unsigned short j_idx = 0, i_count = 0;
+    unsigned char j_curr = -1;
+    unsigned short ith_count = 0;
+    int total_count = 0;
+
+
+    ifstream ifile;
+    ofstream ofile;
+
+    string num = dir;
+
+
+	strcat(ifileDir, dir);
+	strcat(ifileDir, "/matrix.data");
+
+	strcat(ofileDir, dir);
+	strcat(ofileDir, "/DISAfinal.peak");
+
+
+    ifile.open(ifileDir, ios::in);
+    ofile.open(ofileDir, ios::out);
+
+
+
+    //fscanf(ifile, "%d %d\n", &height, &width);
+    ifile >> height >> width;
+    height_1 = height-1;
+    width_1 = width-1;
+
+    head = new int[width*3];
+    // Access element in this format:
+    // head[ row + col*3 ]
+
+    ans_j[++j_curr] = new short[15625];
+    j_idx = 0;
+
+    { /// Topmost row
+      // Doesn't need check_j
+        // read first two row
+        for(int i=0; i<2; i++) {
+            for(int j=0; j<width; j++) {
+                ifile >> head[ i+(j*3) ];
+            }
+        }
+
+        // top left
+        if(head[0 + 0] > head[0 + (1*3)] && head[0 + 0] > head[1 + 0]) {
+            ith_count++;
+            //ans_j.push_back(1);
+            ans_j[j_curr][j_idx++] = 1;
+        }
+
+        // middle cols
+        for(int j=1; j<width_1; j++) {
+            if(head[0 + (j)*3] > head[0 + (j-1)*3] &&
+               head[0 + (j)*3] > head[0 + (j+1)*3] &&
+               head[0 + (j)*3] > head[1 + (j)*3]) {
+                ith_count++;
+                //ans_j.push_back(j+1);
+                ans_j[j_curr][j_idx++] = j+1;
+            }
+        }
+
+        // top right
+        if(head[0 + (width-1)*3] > head[0 + (width-2)*3] && head[0 + (width-1)*3] > head[1 + (width-1)*3]) {
+            ith_count++;
+            //ans_j.push_back(width);
+            ans_j[j_curr][j_idx++] = width;
+        }
+
+        //ans_i.push_back(ith_count);
+        ans_i[i_count++] = ith_count;
+        total_count += ith_count;
+        ith_count = 0;
+    }
+
+    { ///between top and bottom
+        int i=0; // i indicates middle row.  ex: row[i]>row[i-1] && row[i]>row[i+1]
+/// Flattens out into three parts to avoid using i%3
+        while(true) {
+            //printf("%4d ", i);
+            /// Part 1 - "0,1,2".  1 being the middle row
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[2 + j*3];
+                log("%d ", head[2+j*3]);
+            }
+                // leftmost col
+            if(head[1 + 0] > head[    0    ] &&
+               head[1 + 0] > head[2 + 0] &&
+               head[1 + 0] > head[1 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[1 + (j)*3] > head[    (j)*3] &&
+                   head[1 + (j)*3] > head[2 + (j)*3] &&
+                   head[1 + (j)*3] > head[1 + (j-1)*3] &&
+                   head[1 + (j)*3] > head[1 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[1 + width_1*3] > head[    width_1*3] &&
+               head[1 + width_1*3] > head[2 + width_1*3] &&
+               head[1 + width_1*3] > head[1 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+
+
+            /// Part 2 - "1,2,0"
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[0 + j*3];
+                log("%d ", head[0+j*3]);
+            }
+                // leftmost col
+            if(head[2    ] > head[1    ] &&
+               head[2    ] > head[  0  ] &&
+               head[2    ] > head[2 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[2 + (j)*3] > head[1 + (j)*3] &&
+                   head[2 + (j)*3] > head[    (j)*3] &&
+                   head[2 + (j)*3] > head[2 + (j-1)*3] &&
+                   head[2 + (j)*3] > head[2 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[2 + width_1*3] > head[1 + width_1*3] &&
+               head[2 + width_1*3] > head[    width_1*3] &&
+               head[2 + width_1*3] > head[2 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+
+            /// Part 3 - "2,0,1"
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[1 + j*3];
+                log("%d ", head[1+j*3]);
+            }
+                // leftmost col
+            if(head[0    ] > head[2    ] &&
+               head[0    ] > head[1    ] &&
+               head[0    ] > head[0 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[0 + (j)*3] > head[2 + (j)*3] &&
+                   head[0 + (j)*3] > head[1 + (j)*3] &&
+                   head[0 + (j)*3] > head[0 + (j-1)*3] &&
+                   head[0 + (j)*3] > head[0 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[0 + width_1*3] > head[2 + width_1*3] &&
+               head[0 + width_1*3] > head[1 + width_1*3] &&
+               head[0 + width_1*3] > head[0 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+    }
+
+    { /// bottom row
+        if(height_1 % 3 == 1) { /// "0,1,2"
+            // bottom left
+            log("BotLeft012\n%10d%10d\n%10d%10d\n", head[0+0], 0, head[1+0], head[1+3]);
+            if(head[1 + 0] > head[0 + 0] &&
+               head[1 + 0] > head[1 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[1 + j*3] > head[0 + j*3] &&
+                   head[1 + j*3] > head[1 + (j-1)*3] &&
+                   head[1 + j*3] > head[1 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[1 + width_1*3] > head[0 + width_1*3] &&
+               head[1 + width_1*3] > head[1 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+        else if(height_1 % 3 == 2) { /// "1,2,0"
+            // bottom left
+            log("BotLeft120\n%10d%10d\n%10d%10d\n", head[1+0], 0, head[2+0], head[2+3]);
+            if(head[2 + 0] > head[1 + 0] &&
+               head[2 + 0] > head[2 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[2 + j*3] > head[1 + j*3] &&
+                   head[2 + j*3] > head[2 + (j-1)*3] &&
+                   head[2 + j*3] > head[2 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[2 + width_1*3] > head[1 + width_1*3] &&
+               head[2 + width_1*3] > head[2 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+        else { /// "2,0,1"
+            // bottom left
+            if(head[0 + 0] > head[2 + 0] &&
+               head[0 + 0] > head[0 + 3]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[0 + j*3] > head[2 + j*3] &&
+                   head[0 + j*3] > head[0 + (j-1)*3] &&
+                   head[0 + j*3] > head[0 + (j+1)*3]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[0 + width_1*3] > head[2 + width_1*3] &&
+               head[0 + width_1*3] > head[0 + (width_1-1)*3]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+    }
+
+
+
+
+    short row_idx = 1;
+    short jarr_idx = 0;
+    ofile << total_count << "\n";
+    for(unsigned short i = 0, j=0; i<i_count; i++) {
+        short cnt = ans_i[i];
+
+        while(cnt--) { // cnt-- != 0
+            if(j >= 15625) {
+                j=0;
+                jarr_idx++;
+            }
+            ofile << row_idx << " " << ans_j[jarr_idx][j++] << "\n";
+        }
+        row_idx++;
+    }
+
+
+
+    /*
+    short row_idx = 1;
+    ofile << total_count << "\n";
+    for(std::vector<short>::iterator iter_i = ans_i.begin(), iter_j = ans_j.begin();
+        iter_i != ans_i.end(); iter_i++) {
+        short cnt = *iter_i;
+
+        while(cnt--) { // cnt-- != 0
+            ofile << row_idx << " " << *iter_j << "\n";
+            iter_j++;
+        }
+        row_idx++;
+    }
+    */
+
+
+
+    cout << "\n**********\nANS:\n";
+    cout << total_count << "\n";
+    /*for(std::list<int>::iterator iter_i = ans_i.begin(), iter_j = ans_j.begin();
+        iter_i != ans_i.end(); iter_i++, iter_j++) {
+        //cout << *iter_i << " " << *iter_j << endl;
+    }*/
+
+    ifile.close();
+    ofile.close();
+    delete[] head;
+    for(int x=0; x<=j_curr; x++) {
+        delete ans_j[x];
+    }
+}
+
+
+
+void BigRow_extraRow_deltaI_SepArr(const char* dir) {
+    unsigned short height, width, height_1, width_1;
+    int* head;
+    //list<pair<int, int>> ans;
+    short ans_i[1000];
+    short* ans_j[32]; // maximum peak count = 1000*1000/2 = 500,000; divide into 32*15625;
+    unsigned short j_idx = 0, i_count = 0;
+    unsigned char j_curr = -1;
+    unsigned short ith_count = 0;
+    int total_count = 0;
+
+
+    ifstream ifile;
+    ofstream ofile;
+
+    string num = dir;
+
+
+    strcat(ifileDir, dir);
+    strcat(ifileDir, "/matrix.data");
+
+    strcat(ofileDir, dir);
+    strcat(ofileDir, "/DISAfinal.peak");
+
+
+    ifile.open(ifileDir, ios::in);
+    ofile.open(ofileDir, ios::out);
+
+
+
+    //fscanf(ifile, "%d %d\n", &height, &width);
+    ifile >> height >> width;
+    height_1 = height-1;
+    width_1 = width-1;
+
+    head = new int[width<<2];
+    // Access element in this format:
+    // head[ row + col*3 ]
+
+    ans_j[++j_curr] = new short[15625];
+    j_idx = 0;
+
+    { /// Topmost row
+      // Doesn't need check_j
+        // read first two row
+        for(int i=0; i<2; i++) {
+            for(int j=0; j<width; j++) {
+                ifile >> head[ i+(j<<2) ];
+            }
+        }
+
+        // top left
+        if(head[0] > head[4] && head[0] > head[1]) {
+            ith_count++;
+            //ans_j.push_back(1);
+            ans_j[j_curr][j_idx++] = 1;
+        }
+
+        // middle cols
+        for(int j=1; j<width_1; j++) {
+            if(head[j<<2] > head[    ((j-1)<<2)] &&
+               head[j<<2] > head[    ((j+1)<<2)] &&
+               head[j<<2] > head[1 + (j<<2)]) {
+                ith_count++;
+                //ans_j.push_back(j+1);
+                ans_j[j_curr][j_idx++] = j+1;
+            }
+        }
+
+        // top right
+        if(head[    ((width-1)<<2)] > head[    ((width-2)<<2)] && head[    ((width-1)<<2)] > head[1 + ((width-1)<<2)]) {
+            ith_count++;
+            //ans_j.push_back(width);
+            ans_j[j_curr][j_idx++] = width;
+        }
+
+        //ans_i.push_back(ith_count);
+        ans_i[i_count++] = ith_count;
+        total_count += ith_count;
+        ith_count = 0;
+    }
+
+    { ///between top and bottom
+        int i=0; // i indicates middle row.  ex: row[i]>row[i-1] && row[i]>row[i+1]
+/// Flattens out into three parts to avoid using i%3
+        while(true) {
+            //printf("%4d ", i);
+            /// Part 1 - "0,1,2".  1 being the middle row
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[2 + (j<<2)];
+                log("%d ", head[2+(j<<2)]);
+            }
+                // leftmost col
+            if(head[1] > head[0] &&
+               head[1] > head[2] &&
+               head[1] > head[1 + 4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[1 + (j<<2)] > head[    (j<<2)] &&
+                   head[1 + (j<<2)] > head[2 + (j<<2)] &&
+                   head[1 + (j<<2)] > head[1 + ((j-1)<<2)] &&
+                   head[1 + (j<<2)] > head[1 + ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[1 + (width_1<<2)] > head[    (width_1<<2)] &&
+               head[1 + (width_1<<2)] > head[2 + (width_1<<2)] &&
+               head[1 + (width_1<<2)] > head[1 + ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+
+
+            /// Part 2 - "1,2,0"
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[    (j<<2)];
+                log("%d ", head[0+(j<<2)]);
+            }
+                // leftmost col
+            if(head[2    ] > head[1    ] &&
+               head[2    ] > head[  0  ] &&
+               head[2    ] > head[2 + 4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[2 + (j<<2)] > head[1 + (j<<2)] &&
+                   head[2 + (j<<2)] > head[    (j<<2)] &&
+                   head[2 + (j<<2)] > head[2 + ((j-1)<<2)] &&
+                   head[2 + (j<<2)] > head[2 + ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[2 + (width_1<<2)] > head[1 + (width_1<<2)] &&
+               head[2 + (width_1<<2)] > head[    (width_1<<2)] &&
+               head[2 + (width_1<<2)] > head[2 + ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+
+            /// Part 3 - "2,0,1"
+            if(++i >= height_1) break;
+            log("Scanning row %d...\n   ", i+1);
+            for(int j=0; j<width; j++) {
+                ifile >> head[1 + (j<<2)];
+                log("%d ", head[1+(j<<2)]);
+            }
+                // leftmost col
+            if(head[0    ] > head[2    ] &&
+               head[0    ] > head[1    ] &&
+               head[0    ] > head[    4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+                // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[    (j<<2)] > head[2 + (j<<2)] &&
+                   head[    (j<<2)] > head[1 + (j<<2)] &&
+                   head[    (j<<2)] > head[    ((j-1)<<2)] &&
+                   head[    (j<<2)] > head[    ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+                // rightmost col
+            if(head[    (width_1<<2)] > head[2 + (width_1<<2)] &&
+               head[    (width_1<<2)] > head[1 + (width_1<<2)] &&
+               head[    (width_1<<2)] > head[    ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+    }
+
+    { /// bottom row
+        if(height_1 % 3 == 1) { /// "0,1,2"
+            // bottom left
+            if(head[1    ] > head[  0  ] &&
+               head[1    ] > head[1 + 4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[1 + (j<<2)] > head[    (j<<2)] &&
+                   head[1 + (j<<2)] > head[1 + ((j-1)<<2)] &&
+                   head[1 + (j<<2)] > head[1 + ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[1 + (width_1<<2)] > head[    (width_1<<2)] &&
+               head[1 + (width_1<<2)] > head[1 + ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+        else if(height_1 % 3 == 2) { /// "1,2,0"
+            // bottom left
+            if(head[2    ] > head[1    ] &&
+               head[2    ] > head[2 + 4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[2 + (j<<2)] > head[1 + (j<<2)] &&
+                   head[2 + (j<<2)] > head[2 + ((j-1)<<2)] &&
+                   head[2 + (j<<2)] > head[2 + ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[2 + (width_1<<2)] > head[1 + (width_1<<2)] &&
+               head[2 + (width_1<<2)] > head[2 + ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+        else { /// "2,0,1"
+            // bottom left
+            if(head[  0  ] > head[2    ] &&
+               head[  0  ] > head[    4]) {
+                ith_count++;
+                //ans_j.push_back(1);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = 1;
+            }
+            // middle cols
+            for(int j=1; j<width_1; j++) {
+                if(head[    (j<<2)] > head[2 + (j<<2)] &&
+                   head[    (j<<2)] > head[    ((j-1)<<2)] &&
+                   head[    (j<<2)] > head[    ((j+1)<<2)]) {
+                    ith_count++;
+                    //ans_j.push_back(j+1);
+                    Check_J(j_idx, ans_j, j_curr);
+                    ans_j[j_curr][j_idx++] = j+1;
+                }
+            }
+            // bottom right
+            if(head[    (width_1<<2)] > head[2 + (width_1<<2)] &&
+               head[    (width_1<<2)] > head[    ((width_1-1)<<2)]) {
+                ith_count++;
+                //ans_j.push_back(width);
+                Check_J(j_idx, ans_j, j_curr);
+                ans_j[j_curr][j_idx++] = width;
+            }
+
+            //ans_i.push_back(ith_count);
+            ans_i[i_count++] = ith_count;
+            total_count += ith_count;
+            ith_count = 0;
+        }
+    }
+
+
+
+
+    short row_idx = 1;
+    short jarr_idx = 0;
+    ofile << total_count << "\n";
+    for(unsigned short i = 0, j=0; i<i_count; i++) {
+        short cnt = ans_i[i];
+
+        while(cnt--) { // cnt-- != 0
+            if(j >= 15625) {
+                j=0;
+                jarr_idx++;
+            }
+            ofile << row_idx << " " << ans_j[jarr_idx][j++] << "\n";
+        }
+        row_idx++;
+    }
+
+
+
+    /*
+    short row_idx = 1;
+    ofile << total_count << "\n";
+    for(std::vector<short>::iterator iter_i = ans_i.begin(), iter_j = ans_j.begin();
+        iter_i != ans_i.end(); iter_i++) {
+        short cnt = *iter_i;
+
+        while(cnt--) { // cnt-- != 0
+            ofile << row_idx << " " << *iter_j << "\n";
+            iter_j++;
+        }
+        row_idx++;
+    }
+    */
+
+
+
+    cout << "\n**********\nANS:\n";
+    cout << total_count << "\n";
+    /*for(std::list<int>::iterator iter_i = ans_i.begin(), iter_j = ans_j.begin();
+        iter_i != ans_i.end(); iter_i++, iter_j++) {
+        //cout << *iter_i << " " << *iter_j << endl;
+    }*/
+
+    ifile.close();
+    ofile.close();
+    delete[] head;
+    for(int x=0; x<=j_curr; x++) {
+        delete ans_j[x];
+    }
+}
+
+
 int main(int argc, char** argv)
 {
     clock_t s = clock();
@@ -1154,7 +1921,9 @@ int main(int argc, char** argv)
     /// assuming width>=2 && height>=3
 
     //BigRow("106062223");
-    BigRow_deltaI("106062223");
+    //BigRow_deltaI("106062223");
+    BigRow_deltaI_SepArr("106062223");
+    //BigRow_extraRow_deltaI_SepArr("106062223");
     //Naive("106062223");
     /*
     if(argc >= 2){
