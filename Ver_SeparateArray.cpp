@@ -58,7 +58,7 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
         }
 
         // top left
-        if(head[   0] > head[    3] && head[    0] > head[1    ]) {
+        if(head[   0] >= head[    3] && head[    0] >= head[1    ]) {
             ith_count++;
             //ans_j.push_back(1);
             ans_j[j_curr][j_idx++] = 1;
@@ -66,9 +66,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
 
         // middle cols
         for(int j=1; j<width_1; j++) {
-            if(head[    (j)*3] > head[    (j-1)*3] &&
-               head[    (j)*3] > head[    (j+1)*3] &&
-               head[    (j)*3] > head[1 + (j)*3]) {
+            if(head[    (j)*3] >= head[    (j-1)*3] &&
+               head[    (j)*3] >= head[    (j+1)*3] &&
+               head[    (j)*3] >= head[1 + (j)*3]) {
                 ith_count++;
                 //ans_j.push_back(j+1);
                 ans_j[j_curr][j_idx++] = j+1;
@@ -76,7 +76,7 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
         }
 
         // top right
-        if(head[    (width-1)*3] > head[    (width-2)*3] && head[    (width-1)*3] > head[1 + (width-1)*3]) {
+        if(head[    (width-1)*3] >= head[    (width-2)*3] && head[    (width-1)*3] >= head[1 + (width-1)*3]) {
             ith_count++;
             //ans_j.push_back(width);
             ans_j[j_curr][j_idx++] = width;
@@ -99,9 +99,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 ifile >> head[2 + j*3];
             }
                 // leftmost col
-            if(head[1    ] > head[    0    ] &&
-               head[1    ] > head[2    ] &&
-               head[1    ] > head[  4  ]) {
+            if(head[1    ] >= head[    0    ] &&
+               head[1    ] >= head[2    ] &&
+               head[1    ] >= head[  4  ]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -109,10 +109,10 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
                 // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[1 + (j)*3] > head[    (j)*3] &&
-                   head[1 + (j)*3] > head[2 + (j)*3] &&
-                   head[1 + (j)*3] > head[1 + (j-1)*3] &&
-                   head[1 + (j)*3] > head[1 + (j+1)*3]) {
+                if(head[1 + (j)*3] >= head[    (j)*3] &&
+                   head[1 + (j)*3] >= head[2 + (j)*3] &&
+                   head[1 + (j)*3] >= head[1 + (j-1)*3] &&
+                   head[1 + (j)*3] >= head[1 + (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -120,9 +120,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
                 // rightmost col
-            if(head[1 + width_1*3] > head[    width_1*3] &&
-               head[1 + width_1*3] > head[2 + width_1*3] &&
-               head[1 + width_1*3] > head[1 + (width_1-1)*3]) {
+            if(head[1 + width_1*3] >= head[    width_1*3] &&
+               head[1 + width_1*3] >= head[2 + width_1*3] &&
+               head[1 + width_1*3] >= head[1 + (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -141,9 +141,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 ifile >> head[    j*3];
             }
                 // leftmost col
-            if(head[2    ] > head[1    ] &&
-               head[2    ] > head[  0  ] &&
-               head[2    ] > head[  5  ]) {
+            if(head[2    ] >= head[1    ] &&
+               head[2    ] >= head[  0  ] &&
+               head[2    ] >= head[  5  ]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -151,10 +151,10 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
                 // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[2 + (j)*3] > head[1 + (j)*3] &&
-                   head[2 + (j)*3] > head[    (j)*3] &&
-                   head[2 + (j)*3] > head[2 + (j-1)*3] &&
-                   head[2 + (j)*3] > head[2 + (j+1)*3]) {
+                if(head[2 + (j)*3] >= head[1 + (j)*3] &&
+                   head[2 + (j)*3] >= head[    (j)*3] &&
+                   head[2 + (j)*3] >= head[2 + (j-1)*3] &&
+                   head[2 + (j)*3] >= head[2 + (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -162,9 +162,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
                 // rightmost col
-            if(head[2 + width_1*3] > head[1 + width_1*3] &&
-               head[2 + width_1*3] > head[    width_1*3] &&
-               head[2 + width_1*3] > head[2 + (width_1-1)*3]) {
+            if(head[2 + width_1*3] >= head[1 + width_1*3] &&
+               head[2 + width_1*3] >= head[    width_1*3] &&
+               head[2 + width_1*3] >= head[2 + (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -182,9 +182,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 ifile >> head[1 + j*3];
             }
                 // leftmost col
-            if(head[0    ] > head[2    ] &&
-               head[0    ] > head[1    ] &&
-               head[0    ] > head[    3]) {
+            if(head[0    ] >= head[2    ] &&
+               head[0    ] >= head[1    ] &&
+               head[0    ] >= head[    3]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -192,10 +192,10 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
                 // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[    (j)*3] > head[2 + (j)*3] &&
-                   head[    (j)*3] > head[1 + (j)*3] &&
-                   head[    (j)*3] > head[    (j-1)*3] &&
-                   head[    (j)*3] > head[    (j+1)*3]) {
+                if(head[    (j)*3] >= head[2 + (j)*3] &&
+                   head[    (j)*3] >= head[1 + (j)*3] &&
+                   head[    (j)*3] >= head[    (j-1)*3] &&
+                   head[    (j)*3] >= head[    (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -203,9 +203,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
                 // rightmost col
-            if(head[    width_1*3] > head[2 + width_1*3] &&
-               head[    width_1*3] > head[1 + width_1*3] &&
-               head[    width_1*3] > head[    (width_1-1)*3]) {
+            if(head[    width_1*3] >= head[2 + width_1*3] &&
+               head[    width_1*3] >= head[1 + width_1*3] &&
+               head[    width_1*3] >= head[    (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -222,8 +222,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
     { /// bottom row
         if(height_1 % 3 == 1) { /// "0,1,2"
             // bottom left
-            if(head[1    ] > head[    0] &&
-               head[1    ] > head[  4  ]) {
+            if(head[1    ] >= head[    0] &&
+               head[1    ] >= head[  4  ]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -231,9 +231,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
             // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[1 + j*3] > head[    j*3] &&
-                   head[1 + j*3] > head[1 + (j-1)*3] &&
-                   head[1 + j*3] > head[1 + (j+1)*3]) {
+                if(head[1 + j*3] >= head[    j*3] &&
+                   head[1 + j*3] >= head[1 + (j-1)*3] &&
+                   head[1 + j*3] >= head[1 + (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -241,8 +241,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
             // bottom right
-            if(head[1 + width_1*3] > head[    width_1*3] &&
-               head[1 + width_1*3] > head[1 + (width_1-1)*3]) {
+            if(head[1 + width_1*3] >= head[    width_1*3] &&
+               head[1 + width_1*3] >= head[1 + (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -256,8 +256,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
         }
         else if(height_1 % 3 == 2) { /// "1,2,0"
             // bottom left
-            if(head[2    ] > head[1    ] &&
-               head[2    ] > head[  5  ]) {
+            if(head[2    ] >= head[1    ] &&
+               head[2    ] >= head[  5  ]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -265,9 +265,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
             // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[2 + j*3] > head[1 + j*3] &&
-                   head[2 + j*3] > head[2 + (j-1)*3] &&
-                   head[2 + j*3] > head[2 + (j+1)*3]) {
+                if(head[2 + j*3] >= head[1 + j*3] &&
+                   head[2 + j*3] >= head[2 + (j-1)*3] &&
+                   head[2 + j*3] >= head[2 + (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -275,8 +275,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
             // bottom right
-            if(head[2 + width_1*3] > head[1 + width_1*3] &&
-               head[2 + width_1*3] > head[2 + (width_1-1)*3]) {
+            if(head[2 + width_1*3] >= head[1 + width_1*3] &&
+               head[2 + width_1*3] >= head[2 + (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -290,8 +290,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
         }
         else { /// "2,0,1"
             // bottom left
-            if(head[    0] > head[2    ] &&
-               head[    0] > head[    3]) {
+            if(head[    0] >= head[2    ] &&
+               head[    0] >= head[    3]) {
                 ith_count++;
                 //ans_j.push_back(1);
                 Check_J(j_idx, ans_j, j_curr);
@@ -299,9 +299,9 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
             }
             // middle cols
             for(int j=1; j<width_1; j++) {
-                if(head[    j*3] > head[2 + j*3] &&
-                   head[    j*3] > head[    (j-1)*3] &&
-                   head[    j*3] > head[    (j+1)*3]) {
+                if(head[    j*3] >= head[2 + j*3] &&
+                   head[    j*3] >= head[    (j-1)*3] &&
+                   head[    j*3] >= head[    (j+1)*3]) {
                     ith_count++;
                     //ans_j.push_back(j+1);
                     Check_J(j_idx, ans_j, j_curr);
@@ -309,8 +309,8 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
                 }
             }
             // bottom right
-            if(head[    width_1*3] > head[2 + width_1*3] &&
-               head[    width_1*3] > head[    (width_1-1)*3]) {
+            if(head[    width_1*3] >= head[2 + width_1*3] &&
+               head[    width_1*3] >= head[    (width_1-1)*3]) {
                 ith_count++;
                 //ans_j.push_back(width);
                 Check_J(j_idx, ans_j, j_curr);
@@ -344,13 +344,14 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
     }
 
 
-
-    //cout << "\n**********\nANS:\n";
-    //cout << total_count << "\n";
+    /*
+    cout << "\n**********\nANS:\n";
+    cout << total_count << "\n";
+    */
 
     delete[] head;
     for(int x=0; x<=j_curr; x++) {
-        delete ans_j[x];
+        delete[] ans_j[x];
     }
 }
 
@@ -363,28 +364,30 @@ void SingleRow(unsigned short& width) {
         ifile >> head[i];
     }
     // left
-    if(head[0] > head[1])
+    if(head[0] >= head[1])
         ans_j.push_back(1);
     // middle
     for(int i=1; i<width-1; i++) {
-        if(head[i] > head[i-1] && head[i] > head[i+1])
+        if(head[i] >= head[i-1] && head[i] >= head[i+1])
             ans_j.push_back(i+1);
     }
     // right
-    if(head[width-1] > head[width-2]) {
+    if(head[width-1] >= head[width-2]) {
         ans_j.push_back(width);
     }
 
-    ofile << ans_j.size() << "\n";
+    ofile << ans_j.size() << endl;
     for(int i=0; i<ans_j.size(); i++) {
-        cout << "1 " << ans_j[i] << "\n";
+        ofile << "1 " << ans_j[i] << "\n";
     }
+
+    delete[] head;
 }
 
 
 int main(int argc, char** argv)
 {
-    clock_t s = clock();
+    //clock_t s = clock();
     unsigned short height, width;
 
     if(argc <= 1) return 0xAAAA;
@@ -414,7 +417,7 @@ int main(int argc, char** argv)
     ifile.close();
     ofile.close();
 
-    printf("> %ld\n", clock() - s);
+    //printf("> %ld\n", clock() - s);
 
     return 0;
 }
