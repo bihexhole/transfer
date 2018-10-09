@@ -390,7 +390,7 @@ int main(int argc, char** argv)
     strcat(ifileDir, argv[1]);
     strcat(ifileDir, "/matrix.data");
     strcat(ofileDir, argv[1]);
-    strcat(ofileDir, "/DISAfinal.peak");
+    strcat(ofileDir, "/ERfinal.peak");
 
     // open file
     ifile.open(ifileDir, ios::in);
@@ -404,7 +404,7 @@ int main(int argc, char** argv)
         SingleRow(width);
     }
     else {
-        BigRow_deltaI_SepArr(height, width);
+        BigRow_extraRow_deltaI_SepArr(height, width);
     }
 
 
@@ -412,7 +412,7 @@ int main(int argc, char** argv)
     ifile.close();
     ofile.close();
 
-    printf("> %ld\n", clock() - s);
+    //printf("> %ld\n", clock() - s);
 
     return 0;
 }

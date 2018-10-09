@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <vector>
 
 #define printf //printf
 
@@ -392,7 +393,7 @@ int main(int argc, char** argv)
     strcat(ifileDir, argv[1]);
     strcat(ifileDir, "/matrix.data");
     strcat(ofileDir, argv[1]);
-    strcat(ofileDir, "/DISAfinal.peak");
+    strcat(ofileDir, "/SAfinal.peak");
 
     // open file
     ifile.open(ifileDir, ios::in);
