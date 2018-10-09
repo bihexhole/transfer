@@ -354,6 +354,32 @@ void BigRow_deltaI_SepArr(unsigned short height, unsigned short width) {
 }
 
 
+void SingleRow(unsigned short& width) {
+    int* head = new int[width];
+    vector<short> ans_j;
+
+    for(int i=0; i<width; i++) {
+        ifile >> head[i];
+    }
+    // left
+    if(head[0] > head[1])
+        ans_j.push_back(1);
+    // middle
+    for(int i=1; i<width-1; i++) {
+        if(head[i] > head[i-1] && head[i] > head[i+1])
+            ans_j.push_back(i+1);
+    }
+    // right
+    if(head[width-1] > head[width-2]) {
+        ans_j.push_back(width);
+    }
+
+    ofile << ans_j.size() << "\n";
+    for(int i=0; i<ans_j.size(); i++) {
+        cout << "1 " << ans_j[i] << "\n";
+    }
+}
+
 
 int main(int argc, char** argv)
 {
@@ -375,9 +401,12 @@ int main(int argc, char** argv)
     // read dimension
     ifile >> height >> width;
 
-
-    /// assuming width>=2 && height>=3
-    BigRow_deltaI_SepArr(height, width);
+    if(height <= 1) {
+        SingleRow(width);
+    }
+    else {
+        BigRow_deltaI_SepArr(height, width);
+    }
 
 
     // close file
